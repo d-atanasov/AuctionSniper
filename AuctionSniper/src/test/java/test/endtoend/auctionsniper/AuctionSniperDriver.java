@@ -10,12 +10,14 @@ import com.objogate.wl.swing.gesture.GesturePerformer;
 import auctionsniper.ui.MainWindow;
 
 public class AuctionSniperDriver extends JFrameDriver {
-	public AuctionSniperDriver(int timeoutMillis) {
-		super(new GesturePerformer(), JFrameDriver.topLevelFrame(named(MainWindow.MAIN_WINDOW_NAME), showingOnScreen()),
-				new AWTEventQueueProber(timeoutMillis, 100));
-	}
+    @SuppressWarnings("unchecked")
+    public AuctionSniperDriver(int timeoutMillis) {
+        super(new GesturePerformer(), JFrameDriver.topLevelFrame(named(MainWindow.MAIN_WINDOW_NAME), showingOnScreen()),
+                new AWTEventQueueProber(timeoutMillis, 100));
+    }
 
-	public void showsSniperStatus(String statusText) {
-		new JLabelDriver(this, named(MainWindow.SNIPER_STATUS_NAME)).hasText(Matchers.equalTo(statusText));
-	}
+    @SuppressWarnings("unchecked")
+    public void showsSniperStatus(String statusText) {
+        new JLabelDriver(this, named(MainWindow.SNIPER_STATUS_NAME)).hasText(Matchers.equalTo(statusText));
+    }
 }
