@@ -29,8 +29,15 @@
 		<dependency>
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smack-core</artifactId>
-			<version>4.2.0</version>
+			<version>4.0.0-rc1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.googlecode.windowlicker</groupId>
+			<artifactId>windowlicker-swing</artifactId>
+			<version>r268</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 </project>
