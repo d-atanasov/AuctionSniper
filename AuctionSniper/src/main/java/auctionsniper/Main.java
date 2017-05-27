@@ -10,6 +10,7 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
 import auctionsniper.ui.MainWindow;
+import auctionsniper.ui.SnipersTableModel;
 import auctionsniper.xmpp.XMPPAuction;
 
 public class Main {
@@ -20,6 +21,7 @@ public class Main {
     public static final String AUCTION_RESOURCE = "Auction";
     public static final String ITEM_ID_AS_LOGIN = "auction-%s";
     public static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
+    private final SnipersTableModel snipers = new SnipersTableModel();
     private MainWindow ui;
     @SuppressWarnings("unused")
     private Chat notToBeGCd;
@@ -43,7 +45,7 @@ public class Main {
         Auction auction = new XMPPAuction(chat);
 
         chat.addMessageListener(new AuctionMessageTranslator(connection.getUser(),
-                new AuctionSniper(auction, new SniperStateDisplayer())));
+                new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))));
 
         auction.join();
     }
@@ -70,37 +72,26 @@ public class Main {
 
     private void startUserInterface() throws Exception {
         SwingUtilities.invokeAndWait(new Runnable() {
+            @Override
             public void run() {
-                ui = new MainWindow();
+                ui = new MainWindow(snipers);
             }
         });
     }
 
-    public class SniperStateDisplayer implements SniperListener {
-        @Override
-        public void sniperBidding() {
-            showStatus(MainWindow.STATUS_BIDDING);
+    public class SwingThreadSniperListener implements SniperListener {
+        private final SniperListener delegate;
+
+        public SwingThreadSniperListener(SniperListener delegate) {
+            this.delegate = delegate;
         }
 
         @Override
-        public void sniperLost() {
-            showStatus(MainWindow.STATUS_LOST);
-        }
-
-        @Override
-        public void sniperWinning() {
-            showStatus(MainWindow.STATUS_WINNING);
-        }
-
-        @Override
-        public void sniperWon() {
-            showStatus(MainWindow.STATUS_WON);
-        }
-
-        private void showStatus(final String status) {
+        public void sniperStateChanged(final SniperSnapshot snapshot) {
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
-                    ui.showStatus(status);
+                    delegate.sniperStateChanged(snapshot);
                 }
             });
         }
