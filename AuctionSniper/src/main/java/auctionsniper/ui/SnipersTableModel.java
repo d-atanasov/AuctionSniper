@@ -1,6 +1,11 @@
 package auctionsniper.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
+
+import com.objogate.exception.Defect;
 
 import auctionsniper.SniperListener;
 import auctionsniper.SniperSnapshot;
@@ -8,8 +13,7 @@ import auctionsniper.SniperState;
 
 public class SnipersTableModel extends AbstractTableModel implements SniperListener {
     private static final long serialVersionUID = 1L;
-    private final static SniperSnapshot STARTING_UP = new SniperSnapshot("", 0, 0, SniperState.JOINING);
-    private SniperSnapshot snapshot = STARTING_UP;
+    private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
     private static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Lost", "Won" };
 
     @Override
@@ -19,7 +23,7 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 
     @Override
     public int getRowCount() {
-        return 1;
+        return snapshots.size();
     }
 
     @Override
@@ -29,16 +33,28 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return Column.at(columnIndex).valueIn(snapshot);
+        return Column.at(columnIndex).valueIn(snapshots.get(rowIndex));
     }
 
     @Override
     public void sniperStateChanged(SniperSnapshot newSnapshot) {
-        snapshot = newSnapshot;
-        fireTableRowsUpdated(0, 0);
+        for (int i = 0; i < snapshots.size(); i++) {
+            if (newSnapshot.isForSameItemAs(snapshots.get(i))) {
+                snapshots.set(i, newSnapshot);
+                fireTableRowsUpdated(i, i);
+                return;
+            }
+        }
+        throw new Defect("No existing Sniper state for " + newSnapshot.itemId);
     }
 
     public static String textFor(SniperState state) {
         return STATUS_TEXT[state.ordinal()];
+    }
+
+    public void addSniper(SniperSnapshot newSniper) {
+        snapshots.add(newSniper);
+        int row = snapshots.size() - 1;
+        fireTableRowsInserted(row, row);
     }
 }
