@@ -20,6 +20,7 @@ import auctionsniper.SniperSnapshot;
 import auctionsniper.SniperState;
 import auctionsniper.ui.Column;
 import auctionsniper.ui.SnipersTableModel;
+import auctionsniper.util.Defect;
 
 public class SnipersTableModelTest {
     @Rule
@@ -71,6 +72,45 @@ public class SnipersTableModelTest {
         model.addSniper(joining);
         assertEquals(1, model.getRowCount());
         assertRowMatchesSnapshot(0, joining);
+    }
+
+    @Test
+    public void holdsSnipersInAdditionOrder() {
+        context.checking(new Expectations() {
+            {
+                ignoring(listener);
+            }
+        });
+        model.addSniper(SniperSnapshot.joining("item 0"));
+        model.addSniper(SniperSnapshot.joining("item 1"));
+        assertEquals("item 0", cellValue(0, Column.ITEM_IDENTIFIER));
+        assertEquals("item 1", cellValue(1, Column.ITEM_IDENTIFIER));
+    }
+
+    @Test
+    public void updatesCorrectRowForSniper() {
+        SniperSnapshot snapshot1 = SniperSnapshot.joining("item 0");
+        SniperSnapshot snapshot2 = SniperSnapshot.joining("item 1");
+
+        context.checking(new Expectations() {
+            {
+                allowing(listener).tableChanged(with(anyInsertionEvent()));
+                oneOf(listener).tableChanged(with(aChangeInRow(1)));
+            }
+        });
+
+        model.addSniper(snapshot1);
+        model.addSniper(snapshot2);
+
+        SniperSnapshot winning2 = snapshot2.winning(123);
+        model.sniperStateChanged(winning2);
+
+        assertRowMatchesSnapshot(1, winning2);
+    }
+
+    @Test(expected = Defect.class)
+    public void throwsDefectIfNoExistingSniperForAnUpdate() {
+        model.sniperStateChanged(new SniperSnapshot("item 1", 123, 234, SniperState.WINNING));
     }
 
     private void assertRowMatchesSnapshot(int row, SniperSnapshot snapshot) {

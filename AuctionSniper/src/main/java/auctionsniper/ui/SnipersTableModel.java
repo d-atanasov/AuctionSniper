@@ -5,11 +5,10 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.objogate.exception.Defect;
-
 import auctionsniper.SniperListener;
 import auctionsniper.SniperSnapshot;
 import auctionsniper.SniperState;
+import auctionsniper.util.Defect;
 
 public class SnipersTableModel extends AbstractTableModel implements SniperListener {
     private static final long serialVersionUID = 1L;
@@ -38,14 +37,18 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 
     @Override
     public void sniperStateChanged(SniperSnapshot newSnapshot) {
+        int row = rowMatching(newSnapshot);
+        snapshots.set(row, newSnapshot);
+        fireTableRowsUpdated(row, row);
+    }
+
+    private int rowMatching(SniperSnapshot snapshot) {
         for (int i = 0; i < snapshots.size(); i++) {
-            if (newSnapshot.isForSameItemAs(snapshots.get(i))) {
-                snapshots.set(i, newSnapshot);
-                fireTableRowsUpdated(i, i);
-                return;
+            if (snapshot.isForSameItemAs(snapshots.get(i))) {
+                return i;
             }
         }
-        throw new Defect("No existing Sniper state for " + newSnapshot.itemId);
+        throw new Defect("Cannot find match for " + snapshot);
     }
 
     public static String textFor(SniperState state) {
