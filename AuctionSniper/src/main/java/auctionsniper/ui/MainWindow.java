@@ -5,8 +5,10 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,6 +27,7 @@ public class MainWindow extends JFrame {
     public static final String SNIPER_STATUS_NAME = "Sniper status";
     public static final String NEW_ITEM_ID_NAME = "item id";
     public static final String JOIN_BUTTON_NAME = "Join Auction";
+    public static final String NEW_ITEM_STOP_PRICE_NAME = "stop price";
     private final Announcer<UserRequestListener> userRequests = Announcer.to(UserRequestListener.class);
 
     public MainWindow(SniperPortfolio portfolio) {
@@ -37,11 +40,15 @@ public class MainWindow extends JFrame {
     }
 
     private JPanel makeControls() {
-        JPanel controls = new JPanel(new FlowLayout());
         final JTextField itemIdField = new JTextField();
         itemIdField.setColumns(25);
         itemIdField.setName(NEW_ITEM_ID_NAME);
+
+        final JFormattedTextField stopPriceField = stopPriceField();
+
+        JPanel controls = new JPanel(new FlowLayout());
         controls.add(itemIdField);
+        controls.add(stopPriceField);
 
         JButton joinAuctionButton = new JButton("Join Auction");
         joinAuctionButton.setName(JOIN_BUTTON_NAME);
@@ -73,5 +80,12 @@ public class MainWindow extends JFrame {
 
     public void addUserRequestListener(UserRequestListener userRequestListener) {
         userRequests.addListener(userRequestListener);
+    }
+
+    private JFormattedTextField stopPriceField() {
+        JFormattedTextField stopPriceField = new JFormattedTextField(NumberFormat.getIntegerInstance());
+        stopPriceField.setColumns(7);
+        stopPriceField.setName(NEW_ITEM_STOP_PRICE_NAME);
+        return stopPriceField;
     }
 }
