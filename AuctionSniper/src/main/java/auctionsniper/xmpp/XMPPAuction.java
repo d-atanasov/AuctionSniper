@@ -8,7 +8,6 @@ import org.jivesoftware.smack.XMPPException;
 
 import auctionsniper.Auction;
 import auctionsniper.AuctionEventListener;
-import auctionsniper.AuctionMessageTranslator;
 import auctionsniper.util.Announcer;
 
 public class XMPPAuction implements Auction {

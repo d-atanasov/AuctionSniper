@@ -1,4 +1,4 @@
-package test.auctionsniper;
+package test.auctionsniper.xmpp;
 
 import static test.endtoend.auctionsniper.ApplicationRunner.SNIPER_ID;
 
@@ -10,7 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import auctionsniper.AuctionEventListener;
-import auctionsniper.AuctionMessageTranslator;
+import auctionsniper.xmpp.AuctionMessageTranslator;
 import auctionsniper.xmpp.XMPPFailureReporter;
 
 public class AuctionMessageTranslatorTest {

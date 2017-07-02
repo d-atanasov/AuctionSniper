@@ -1,4 +1,4 @@
-package test.auctionsniper.ui;
+package test.integration.auctionsniper.ui;
 
 import static org.hamcrest.Matchers.equalTo;
 
