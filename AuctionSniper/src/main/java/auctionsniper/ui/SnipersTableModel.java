@@ -18,7 +18,7 @@ public class SnipersTableModel extends AbstractTableModel
     private static final long serialVersionUID = 1L;
     private final ArrayList<AuctionSniper> notToBeGCd = new ArrayList<AuctionSniper>();
     private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
-    private static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Losing", "Lost", "Won" };
+    private static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Losing", "Lost", "Won", "Failed" };
 
     @Override
     public int getColumnCount() {

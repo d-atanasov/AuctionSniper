@@ -13,6 +13,7 @@ import org.junit.Test;
 import auctionsniper.Auction;
 import auctionsniper.AuctionEventListener;
 import auctionsniper.UserRequestListener.Item;
+import auctionsniper.xmpp.XMPPAuctionException;
 import auctionsniper.xmpp.XMPPAuctionHouse;
 import test.endtoend.auctionsniper.ApplicationRunner;
 import test.endtoend.auctionsniper.FakeAuctionServer;
@@ -22,7 +23,7 @@ public class XMPPAuctionHouseTest {
     private XMPPAuctionHouse auctionHouse;
 
     @Before
-    public void openConnection() throws XMPPException {
+    public void openConnection() throws XMPPException, XMPPAuctionException {
         auctionHouse = XMPPAuctionHouse.connect(FakeAuctionServer.XMPP_HOSTNAME, ApplicationRunner.SNIPER_ID,
                 ApplicationRunner.SNIPER_PASSWORD);
     }
@@ -66,6 +67,11 @@ public class XMPPAuctionHouseTest {
 
             @Override
             public void currentPrice(int price, int increment, PriceSource priceSource) {
+                // not implemented
+            }
+
+            @Override
+            public void auctionFailed() {
                 // not implemented
             }
         };
